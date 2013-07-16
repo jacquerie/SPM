@@ -47,7 +47,7 @@ int sketo::main(int argc, char *argv[]) {
 
 	jobs = sketo::list_skeletons::map(write_result, jobs);
 
-	sketo::cout << double(end - begin) / CLOCKS_PER_SEC << std::endl;
+	sketo::cout << "Time elapsed for parallel: " << double(end - begin) / CLOCKS_PER_SEC << "s" << std::endl;
 
 	return 0;
 }
