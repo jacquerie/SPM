@@ -1,0 +1,8 @@
+#!/bin/bash
+
+for i in {1..10}
+do
+	# http://stackoverflow.com/a/9333006/374865
+	./sequential ${1-10} >> sequential.dat
+done
+

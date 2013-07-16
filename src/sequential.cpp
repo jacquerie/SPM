@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Logging to stdout the computation time.
-	std::cout << numberOfJobs << "\t" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
+	std::cout << numberOfJobs << " " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
 	return 0;
 }
