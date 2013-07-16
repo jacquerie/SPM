@@ -72,6 +72,3 @@ Job Job::writeResult() {
 	return *this;
 }
 
-std::string Job::toString() {
-	return "TODO";
-}

@@ -1,48 +1,55 @@
 /*
  * File: sequential.cpp
  * --------------------
- * TODO
+ * A sequential program computing histogram thresholding
+ * for numberOfJobs images. Each job is abstracted in the
+ * Job class.
  */
 
 #include <ctime>
 #include <iostream>
+#include <list>
 #include <stdlib.h>
-#include <vector>
 #include <Magick++.h>
 
 #include "job.h"
 
 int main(int argc, char *argv[]) {
-	int i, numberOfTasks, percentage;
-	std::vector<Job> jobs;
+	int percentage;
+	size_t i, numberOfJobs;
+	std::list<Job> jobs;
 
+	// Very simple argument parsing.
 	if (argc != 2) {
-		std::cerr << "Usage: " << argv[0] << " numberOfTasks" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " numberOfJobs" << std::endl;
 		return -1;
 	} else {
-		numberOfTasks = atoi(argv[1]);
+		numberOfJobs = atoi(argv[1]);
 	}
 
+	// Job initialization.
 	srand(time(NULL));
-	for (i = 0; i < numberOfTasks; i++) {
+	for (i = 0; i < numberOfJobs; i++) {
 		percentage = rand() % 100;
 		Job j(percentage);
 		jobs.push_back(j);
 	}
 
+	// The actual computation.
 	std::clock_t begin = std::clock();
-
-	for (i = 0; i < numberOfTasks; i++) {
-		jobs[i].execute();
+	std::list<Job>::iterator j_it, j_end;
+	for (j_it = jobs.begin(), j_end = jobs.end(); j_it != j_end; j_it++) {
+		j_it->execute();
 	}
-
 	std::clock_t end = std::clock();
 
-	std::cout << "Time elapsed for sequential: " << double(end - begin) / CLOCKS_PER_SEC << "s" << std::endl;
-
-	for (i = 0; i < numberOfTasks; i++) {
-		jobs[i].writeResult();
+	// Writing the results to disk.
+	for (j_it = jobs.begin(), j_end = jobs.end(); j_it != j_end; j_it++) {
+		j_it->writeResult();
 	}
+
+	// Logging to stdout the computation time.
+	std::cout << numberOfJobs << "\t" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
 	return 0;
 }

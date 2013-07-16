@@ -48,15 +48,6 @@ public:
 
 	Job writeResult();
 
-/*
- * Method: toString();
- * Usage std::string j.toString();
- * -------------------------------
- * Returns a string representation of this object.
- */
-
-	std::string toString();
-
 private:
 
 	Magick::Image originalImage;
