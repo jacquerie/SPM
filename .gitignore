@@ -1,6 +1,12 @@
+# Output of make parallel
+parallel
+
+# Output of make sequential
+sequential
+
+# Output of make tex
 relazione.aux
 relazione.log
 relazione.out
-relazione.pdf
 relazione.pyg
 relazione.toc
