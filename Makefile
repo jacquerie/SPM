@@ -5,7 +5,7 @@ all: gif parallel sequential tex
 clean:
 	rm -f lena.gif
 	rm -f sequential parallel
-	rm -f relazione.aux relazione.log relazione.pdf relazione.pyg relazione.toc
+	rm -f relazione.aux relazione.log relazione.out relazione.pdf relazione.pyg relazione.toc
 
 gif:
 	convert -delay 1 -loop 0 "img/lena-threshold-*.png" lena.gif

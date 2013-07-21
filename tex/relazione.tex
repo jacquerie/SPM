@@ -41,14 +41,14 @@
     specifico quelli forniti dal framework 
     \href{http://sketo.ipl-lab.org/}{\underline{SkeTo}}.
 
-    SkeTo è uno skeleton framework per certi versi atipico: dichiarazione e
-    istanziazione degli skeleton avvengono allo stesso tempo. I metodi
-    offerti dalle classi astratte del framework, implementate in termini di
-    template, sono quelli tipici della programmazione funzionale, come
-    \texttt{map}, \texttt{reduce} e \texttt{scan}. Queste caratteristiche
-    rendono molto compatto il codice: in effetti l'intero codice non
-    funzionale parallelo di \texttt{src/parallel.cpp} ammonta a \(63\) righe 
-    commenti inclusi, di cui appena \(3\) chiamate di libreria.
+    SkeTo è uno skeleton framework in cui dichiarazione e istanziazione degli
+    skeleton avvengono allo stesso tempo. I metodi offerti dalle classi
+    astratte del framework, implementate in termini di template, sono quelli
+    tipici della programmazione funzionale, come \texttt{map}, \texttt{reduce}
+    e \texttt{scan}. Queste caratteristiche rendono molto compatto il codice:
+    in effetti l'intero codice non funzionale parallelo di
+    \texttt{src/parallel.cpp} ammonta a \(63\) righe commenti inclusi, di cui
+    appena \(3\) chiamate di libreria.
 
     Il codice non funzionale sequenziale di \texttt{src/sequential.cpp} \`e
     un ordinario programma \cpp. La struttura delle due implementazioni \`e
@@ -158,7 +158,7 @@
       \begin{subfigure}[b]{0.33\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/lena-threshold-20.png}
-        \caption*{\texttt{p }\( = 20\)}
+        \caption*{\texttt{p }\( = 20\%\)}
       \end{subfigure}
 
       \vspace{0.02\textwidth}
@@ -166,13 +166,13 @@
       \begin{subfigure}[b]{0.33\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/lena-threshold-40.png}
-        \caption*{\texttt{p }\( = 40\)}
+        \caption*{\texttt{p }\( = 40\%\)}
       \end{subfigure}
       \hspace{0.15\textwidth}
       \begin{subfigure}[b]{0.33\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/lena-threshold-60.png}
-        \caption*{\texttt{p }\( = 60\)}
+        \caption*{\texttt{p }\( = 60\%\)}
       \end{subfigure}
 
       \vspace{0.02\textwidth}
@@ -180,13 +180,13 @@
       \begin{subfigure}[b]{0.33\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/lena-threshold-80.png}
-        \caption*{\texttt{p }\( = 80\)}
+        \caption*{\texttt{p }\( = 80\%\)}
       \end{subfigure}
       \hspace{0.15\textwidth}
       \begin{subfigure}[b]{0.33\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/lena-threshold-99.png}
-        \caption*{\texttt{p }\( = 99\)}
+        \caption*{\texttt{p }\( = 99\%\)}
       \end{subfigure}
     \end{figure}
 
@@ -194,7 +194,7 @@
     ImageMagick, una gif animata i cui frame siano le immagini risultanti
     al variare della soglia da \(0\) a \(99\). Per ottenerla \`e sufficiente
     invocare la rule \texttt{make gif} del \texttt{Makefile} oppure visitare il
-    seguente indirizzo: \textcolor{blue}{\underline{\url{http://raw.github.com/jacquerie/SPM/master/lena.gif}}}.
+    seguente indirizzo: \href{http://raw.github.com/jacquerie/SPM/master/lena.gif}{\underline{http://raw.github.com/jacquerie/SPM/master/lena.gif}}.
 
   \appendix
     \section{Manuale d'uso}
@@ -212,7 +212,9 @@
           distribuzione di MPI compatibile e ImageMagick.
         \item[\texttt{sequential}:] Compila con \texttt{g++} l'implementazione
           sequenziale. Richiede l'installazione di ImageMagick.
-        \item[\texttt{tex}:] Compila con \texttt{pdflatex} il presente documento. Richiede che il pacchetto Python \href{http://pygments.org}{\underline{pygments}} sia installato.
+        \item[\texttt{tex}:] Compila con \texttt{pdflatex} il presente
+          documento. Richiede l'installazione di \texttt{pdflatex} e del
+          pacchetto Python \href{http://pygments.org}{\underline{pygments}}.
       \end{description}
 
       \subsection{Eseguibili}
@@ -244,7 +246,7 @@
 
       \subsection{Licenza}
 
-      Il codice \`e rilasciato con \href{http://opensource.org/licenses/MIT}{licenza MIT}
-      ed \`e disponibile su \href{https://github.com/jacquerie/SPM}{Github}.
+      Il codice \`e rilasciato con \href{http://opensource.org/licenses/MIT}{\underline{licenza MIT}}
+      ed \`e disponibile su \href{https://github.com/jacquerie/SPM}{\underline{Github}}.
 \end{document}
 
