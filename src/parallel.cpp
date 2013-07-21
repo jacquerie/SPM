@@ -48,7 +48,7 @@ int sketo::main(int argc, char *argv[]) {
 	// Job initialization.
 	sketo::dist_list<Job> jobs = sketo::list_skeletons::generate(numberOfJobs, generate);
 
-	// The actual computation.	
+	// The actual computation.
 	std::clock_t begin = std::clock();
 	jobs = sketo::list_skeletons::map(execute, jobs);
 	std::clock_t end = std::clock();
@@ -61,4 +61,3 @@ int sketo::main(int argc, char *argv[]) {
 
 	return 0;
 }
-

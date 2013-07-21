@@ -8,7 +8,6 @@
 #ifndef _job_h
 #define _job_h
 
-#include <string>
 #include "Magick++.h"
 
 class Job {
