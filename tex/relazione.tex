@@ -2,6 +2,7 @@
 
 \usepackage{algorithm}
 \usepackage[noend]{algorithmic}
+\usepackage{amsmath}
 \usepackage[italian]{babel}
 \usepackage{caption}
 \usepackage{enumitem}
@@ -12,15 +13,16 @@
 \usepackage[utf8]{inputenc}
 \usepackage{minted}
 \usepackage{subcaption}
+\usepackage{tabularx}
 
-% Hacks needed to get the algorithm package to work.
+% Hacks needed to get the algorithm package to work as intended.
 \floatname{algorithm}{Algoritmo}
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 
 \title{Progetto del corso Sistemi Distribuiti: Paradigmi e Modelli, 2012/2013}
 \author{
 	Jacopo Notarstefano\\
-	\texttt{jacopo [dot] notarstefano [at] gmail.com}
+	\texttt{jacopo.notarstefano [at] gmail.com}
 }
 \date{}
 
@@ -87,26 +89,27 @@
     abbiamo il seguente:
 
     \begin{algorithm}
-        \caption{\textsc{Na\"ive Histogram Thresholding}}
-        \begin{algorithmic}[1]
-            \REQUIRE \texttt{luminosities} \(=\) \texttt{[]}, \texttt{I} immagine di larghezza \texttt{imageWidth} e altezza \texttt{imageHeight}
-            \FOR{\texttt{i} \(\le\) \texttt{imageWidth}}
-                \FOR{\texttt{j} \(\le\) \texttt{imageHeight}}
-                    \STATE \texttt{luminosities.push(I[i][j].luminosity())}
-                \ENDFOR
+      \caption{\textsc{Na\"ive Histogram Thresholding}}
+      \begin{algorithmic}[1]
+        \REQUIRE \texttt{p} intero, \(0 \le\) \texttt{p} \(< 100\), \texttt{I} immagine di larghezza \texttt{imageWidth} e altezza \texttt{imageHeight}
+        \STATE \texttt{luminosities} \(=\) \texttt{[]}
+        \FOR{\texttt{i} \(\le\) \texttt{imageWidth}}
+          \FOR{\texttt{j} \(\le\) \texttt{imageHeight}}
+            \STATE \texttt{luminosities.push(I[i][j].luminosity())}
+          \ENDFOR
+        \ENDFOR
+        \STATE \texttt{luminosities.sort()}
+        \STATE \texttt{threshold} \(\leftarrow\) \texttt{luminosities[luminosities.length() * p / 100]}
+          \FOR{\texttt{i} \(\le\) \texttt{imageWidth}}
+            \FOR{\texttt{j} \(\le\) \texttt{imageHeight}}
+              \IF{\texttt{I[i][j].luminosity()} \(>\) \texttt{threshold}}
+                \STATE \texttt{BW[i][j]} \(\leftarrow\) \texttt{white}
+              \ELSE
+                \STATE \texttt{BW[i][j]} \(\leftarrow\) \texttt{black}
+              \ENDIF
             \ENDFOR
-            \STATE \texttt{luminosities.sort()}
-            \STATE \texttt{threshold} \(\leftarrow\) \texttt{luminosities[luminosities.length() * p / 100]}
-            \FOR{\texttt{i} \(\le\) \texttt{imageWidth}}
-                \FOR{\texttt{j} \(\le\) \texttt{imageHeight}}
-                    \IF{\texttt{I[i][j].luminosity()} \(>\) \texttt{threshold}}
-                        \STATE \texttt{BW[i][j]} \(\leftarrow\) \texttt{white}
-                    \ELSE
-                        \STATE \texttt{BW[i][j]} \(\leftarrow\) \texttt{black}
-                    \ENDIF
-                \ENDFOR
-            \ENDFOR
-            \RETURN \texttt{BW}
+          \ENDFOR
+          \RETURN \texttt{BW}
         \end{algorithmic}
     \end{algorithm}
 
@@ -141,6 +144,98 @@
     la sua API per \cpp, versione \texttt{6.8.6-1}.
 
     \section{Valutazione delle performance}
+
+    Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
+    service time dell'applicazione sequenziale e di quella parallela con
+    grado di parallelismo \(n\). L'esecuzione degli script
+    \texttt{awk -f sequential.awk sequential.dat} e
+    \texttt{awk -f parallel.awk parallel.dat} porta a stimare
+    \(T_{\text{seq}} \approx 0.86\) e \(T_{\text{par}}(n)\) come
+    dalla seguente tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
+              & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
+        \hline
+        \(T_{\text{par}}(n)\) & .89 & .46 & .38 & .28 & .18 & .19 & .19 & .20
+                        & .19 & .13 & .14 & .17 & .16 & .17 & .18 & .18 \\
+      \end{tabularx}
+    \end{table}
+
+    L'esecuzione dello script \texttt{awk -f speedup.awk parallel.dat}
+    permette di stimare lo speedup \(s(n)\) come segue:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
+              & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
+        \hline
+        \(s(n)\) & 0.96 & 1.85 & 2.29 & 3.03 & 4.67 & 4.49 & 4.53 & 4.39
+                 & 4.50 & 6.72 & 6.03 & 5.17 & 5.49 & 5.18 & 4.72 & 4.84 \\
+      \end{tabularx}
+    \end{table}
+
+    Dallo script \texttt{awk -f scalability.awk parallel.dat} ricaviamo le
+    seguenti stime per la scalabilità \(\text{scalab}(n)\):
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
+              & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
+        \hline
+        \(\text{scalab}(n)\) & 1.00 & 1.92 & 2.37 & 3.15 & 4.85 & 4.66 & 4.71 & 4.56
+                 & 4.68 & 6.98 & 6.26 & 5.37 & 5.70 & 5.38 & 4.91 & 5.02 \\
+      \end{tabularx}
+    \end{table}
+
+    Inoltre dallo script \texttt{awk -f efficiency.awk parallel.dat}
+    possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
+              & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
+        \hline
+        \(\epsilon(n)\) & .96 & .93 & .76 & .76 & .93 & .75 & .65 & .55
+                  & .50 & .67 & .55 & .43 & .42 & .37 & .31 & .30 \\
+      \end{tabularx}
+    \end{table}
+
+    Rappresentiamo infine per immediatezza visiva le precedenti tabelle con
+    istogrammi:
+
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/parallel.tex}}
+        \caption*{\(T_{\text{par}}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/speedup.tex}}
+        \caption*{\(s(n)\)}
+      \end{subfigure}
+
+      \vspace{0.05\textwidth}
+
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/scalability.tex}}
+        \caption*{\(\text{scalab}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/efficiency.tex}}
+        \caption*{\(\epsilon(n)\)}
+      \end{subfigure}
+    \end{figure}
+
+    Osserviamo che il programma scala, ma meno di quanto teoricamente atteso,
+    in particolare su più di \(10\) processori.
 
     \section{Valutazione dei risultati}
 
