@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 #include <Magick++.h>
 #include "job.h"
 

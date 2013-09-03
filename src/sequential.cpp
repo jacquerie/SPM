@@ -7,10 +7,9 @@
  */
 
 #include <ctime>
+#include <cstdlib>
 #include <iostream>
 #include <list>
-#include <stdlib.h>
-#include <Magick++.h>
 
 #include "job.h"
 
