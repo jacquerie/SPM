@@ -22,5 +22,5 @@ sequential: src/sequential.cpp
 tex:
 	pdflatex -shell-escape tex/relazione.tex
 
-.PHONY: all clean gif parallel sequential tex
+.PHONY: all clean gif nproc parallel sequential tex
 
