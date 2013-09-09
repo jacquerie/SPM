@@ -5,7 +5,7 @@ awk:
 	awk -f awk/sequential.wak dat/cluster-sequential.dat
 
 clean:
-	rm -f sequential parallel
+	rm -f bin/sequential bin/parallel
 	rm -f relazione.aux relazione.log relazione.out relazione.pyg relazione.toc
 
 gif:
@@ -24,5 +24,5 @@ sequential: src/sequential.cpp
 	g++ src/sequential.cpp src/job.cpp -o bin/sequential $(MAGICFLAGS)
 
 
-.PHONY: clean gif nproc parallel pdf sequential
+.PHONY: awk clean gif nproc parallel pdf sequential
 
