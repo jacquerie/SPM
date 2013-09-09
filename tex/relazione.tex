@@ -117,10 +117,7 @@
 
     Abbiamo posto particolare enfasi nella divisione fra codice funzionale e
     non funzionale; in particolare il business code dell'applicazione è
-    interamente astratto nella classe \texttt{Job}, di cui diamo di seguito
-    l'interfaccia:
-
-    \inputminted[]{c++}{src/job.h}
+    interamente astratto nella classe \texttt{Job}.
 
     Osserviamo che i metodi \texttt{execute} e \texttt{writeResult} hanno
     come tipo di ritorno \texttt{Job}; in effetti questi metodi ritornano
@@ -141,7 +138,7 @@
     Infine la lettura e scrittura delle immagini sono interamente delegate alla
     libreria \href{http://www.imagemagick.org/script/index.php}{\underline{ImageMagick}}
     tramite \href{http://www.imagemagick.org/script/magick++.php}{\underline{\mpp}},
-    la sua API per \cpp, versione \texttt{6.8.6-1}.
+    la sua API per \cpp, versione \texttt{6.8.6-9}.
 
     \section{Valutazione delle performance}
 
@@ -303,48 +300,30 @@
       \subsection{Makefile}
 
       \begin{description}
-        \item[\texttt{all}:] Invoca le rule \texttt{gif}, \texttt{parallel}, \texttt{sequential} e \texttt{tex}
-        \item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{gif}, \texttt{parallel}, \texttt{sequential} e \texttt{tex}.
+        \item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{parallel}, \texttt{sequential} e \texttt{tex}.
         \item[\texttt{gif}:] Genera una gif animata i cui frame sono le
           immagini risultanti al variare della soglia \texttt{p} da \(0\) a
-          \(99\). Richiede l'installazione di ImageMagick e che \texttt{convert}
-          sia nel \texttt{PATH}.
+          \(99\). Richiede l'installazione di ImageMagick.
         \item[\texttt{parallel}:] Compila con \texttt{sketocxx}
           l'implementazione parallela. Richiede l'installazione di SkeTo, una
           distribuzione di MPI compatibile e ImageMagick.
-        \item[\texttt{sequential}:] Compila con \texttt{g++} l'implementazione
-          sequenziale. Richiede l'installazione di ImageMagick.
-        \item[\texttt{tex}:] Compila con \texttt{pdflatex} il presente
+  	\item[\texttt{pdf}:] Compila con \texttt{pdflatex} il presente
           documento. Richiede l'installazione di \texttt{pdflatex} e del
           pacchetto Python \href{http://pygments.org}{\underline{pygments}}.
+        \item[\texttt{sequential}:] Compila con \texttt{g++} l'implementazione
+          sequenziale. Richiede l'installazione di ImageMagick.
       \end{description}
 
       \subsection{Eseguibili}
 
       \begin{description}
-        \item[\texttt{./sequential numberOfJobs}:] Esegue \texttt{sequential}
+        \item[\texttt{bin/sequential numberOfJobs}:] Esegue \texttt{sequential}
           su \texttt{numberOfJobs} istanze del problema dell'Histogram
           Thresholding. Stampa su \texttt{stdout} una coppia separata da uno
           spazio in cui il primo numero \`e \texttt{numberOfJobs} e il secondo
           il tempo in secondi impiegato da \texttt{sequential} a meno di
           operazioni di lettura e scrittura sul file system. 
-        \item[\texttt{./test\_parallel [numberOfJobs=10]}:] Aggiunge in coda al file
-          \texttt{parallel.dat} i risultati di \(10\) invocazioni su \texttt{NP}
-          processi, per \texttt{NP} che varia da \(1\) a \(16\),
-          dell'implementazione parallela su istanze di taglia
-          \texttt{numberOfJobs}. I risultati sono riportati come triple separate
-          da spazi in cui il primo numero \`e \texttt{NP}, il secondo
-          \texttt{numberOfJobs} e il terzo il tempo impiegato a meno di
-          letture e scritture sul file system.
-        \item[\texttt{./test\_sequential [numberOfJobs=10]}:] Invoca \(10\)
-          volte \texttt{./sequential numberOfJobs} con valore di default \(10\),
-          redirigendo \texttt{stdout} sul file \texttt{sequential.dat}.
       \end{description}
-
-      Esiste infine la possibilit\`a di invocare direttamente
-      \texttt{./parallel} con la sintassi
-      \texttt{sketorun -np NP ./parallel numberOfJobs}, in cui \texttt{NP} \`e
-      il numero di processi che si desiderano far partire.
 
       \subsection{Licenza}
 
