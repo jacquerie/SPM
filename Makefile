@@ -1,6 +1,8 @@
 MAGICFLAGS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
 
-all: gif parallel sequential tex
+awk:
+	awk -f awk/sequential.awk dat/multicore-sequential.dat
+	awk -f awk/sequential.wak dat/cluster-sequential.dat
 
 clean:
 	rm -f sequential parallel
@@ -13,13 +15,14 @@ nproc:
 	@awk -F ":" -f awk/nproc.awk Machinefile
 
 parallel: src/parallel.cpp
-	sketocxx src/parallel.cpp src/job.cpp -o parallel $(MAGICFLAGS)
+	sketocxx src/parallel.cpp src/job.cpp -o bin/parallel $(MAGICFLAGS)
 
-sequential: src/sequential.cpp
-	g++ src/sequential.cpp src/job.cpp -o sequential $(MAGICFLAGS)
-
-tex:
+pdf:
 	pdflatex -shell-escape tex/relazione.tex
 
-.PHONY: all clean gif parallel sequential tex
+sequential: src/sequential.cpp
+	g++ src/sequential.cpp src/job.cpp -o bin/sequential $(MAGICFLAGS)
+
+
+.PHONY: clean gif nproc parallel pdf sequential
 
