@@ -13,14 +13,14 @@
 #include "job.h"
 
 Job::Job() {
-	Magick::Image originalImage("lena.ppm");
+	Magick::Image originalImage("../lena.png");
 
 	this->originalImage = originalImage;
 	this->percentage = 50;
 }
 
 Job::Job(int percentage) {
-	Magick::Image originalImage("lena.ppm");
+	Magick::Image originalImage("../lena.png");
 
 	this->originalImage = originalImage;
 	this->percentage = percentage;
