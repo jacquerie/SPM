@@ -1,0 +1,9 @@
+#!/bin/bash
+
+NUMBER_OF_JOBS=100
+
+for i in {1..100}
+do
+    sketorun -np `make nproc` -f Machinefile bin/parallel $NUMBER_OF_JOBS
+done
+
