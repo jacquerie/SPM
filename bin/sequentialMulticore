@@ -1,0 +1,9 @@
+#!/bin/bash
+
+NUMBER_OF_JOBS=100
+
+for i in {1..100}
+do
+	bin/sequential $NUMBER_OF_JOBS
+end
+
