@@ -57,7 +57,7 @@ int sketo::main(int argc, char *argv[]) {
 	jobs = sketo::list_skeletons::map(write_result, jobs);
 
 	// Logging to stdout the computation time.
-	sketo::cout << numberOfJobs << "\t" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
+	sketo::cout << numberOfJobs << " " << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 
 	return 0;
 }
