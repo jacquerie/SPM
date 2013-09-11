@@ -1,8 +1,8 @@
 # Output of make parallel
-parallel
+bin/parallel
 
 # Output of make sequential
-sequential
+bin/sequential
 
 # Output of make tex
 relazione.aux
