@@ -5,6 +5,6 @@ NUMBER_OF_PROC=`make nproc`
 
 for i in {1..100}
 do
-    echo $NUMBER_OF_PROC `sketorun -np $NUMBER_OF_PROC -f Machinefile bin/parallel $NUMBER_OF_JOBS`
+    sketorun -np $NUMBER_OF_PROC -f Machinefile bin/parallel $NUMBER_OF_JOBS
 done
 
