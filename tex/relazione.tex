@@ -144,15 +144,15 @@
 
     I seguenti test sono stati svolti su \texttt{andromeda.di.unipi.it},
     macchina dotata di 16 core. In particolare sono stati utilizzati per
-    la raccolta dati gli script \texttt{test\_sequential} e
-    \texttt{test\_parallel} descritti in appendice.
+    la raccolta dati gli script \texttt{bin/sequentialMulticore} e
+    \texttt{bin/parallelMulticore} descritti in appendice.
 
     Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
     service time dell'applicazione sequenziale e di quella parallela con
     grado di parallelismo \(n\). L'esecuzione degli script
-    \texttt{awk -f sequential.awk sequential.dat} e
-    \texttt{awk -f parallel.awk parallel.dat} porta a stimare
-    \(T_{\text{seq}} \approx 0.86\) e \(T_{\text{par}}(n)\) come
+    \texttt{awk -f awk/service\_time.awk dat/sequential\_multicore.awk} e
+    \texttt{awk -f awk/multicore\_service\_time.awk dat/parallel\_multicore.raw} porta a stimare
+    \(T_{\text{seq}} \approx 1.12\) e \(T_{\text{par}}(n)\) come
     dalla seguente tabella:
 
     \begin{table}[H]
@@ -165,7 +165,7 @@
       \end{tabularx}
     \end{table}
 
-    L'esecuzione dello script \texttt{awk -f speedup.awk parallel.dat}
+    L'esecuzione dello script \texttt{awk -f awk/multicore\_speedup.awk dat/parallel\_multicore.raw}
     permette di stimare lo speedup \(s(n)\) come segue:
 
     \begin{table}[H]
@@ -178,7 +178,7 @@
       \end{tabularx}
     \end{table}
 
-    Dallo script \texttt{awk -f scalability.awk parallel.dat} ricaviamo le
+    Dallo script \texttt{awk -f awk/multicore\_scalability.awk dat/parallel\_multicore.raw} ricaviamo le
     seguenti stime per la scalabilità \(\text{scalab}(n)\):
 
     \begin{table}[H]
@@ -191,7 +191,7 @@
       \end{tabularx}
     \end{table}
 
-    Inoltre dallo script \texttt{awk -f efficiency.awk parallel.dat}
+    Inoltre dallo script \texttt{awk -f awk/multicore\_efficiency.awk dat/parallel\_multicore.raw}
     possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
 
     \begin{table}[H]
