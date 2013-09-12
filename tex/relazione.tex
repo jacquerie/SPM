@@ -65,7 +65,7 @@
     Parte centrale del lavoro \`e il confronto delle performance con le
     previsioni teoriche, seguito da una dimostrazione dei risultati ottenuti
     dal programma. Concludiamo con un manuale d'uso che contiene le rule
-    definite nel \texttt{Makefile} e altri script disponibili.
+    definite nel \texttt{Makefile} e gli script disponibili.
 
     \section{Il problema dell'Histogram Thresholding}
 
@@ -129,39 +129,50 @@
 
     \inputminted[]{c++}{tex/src/function-object.cpp}
 
-    Come gi\`a ricordato l'implementazione parallela si avvale di SkeTo, in
-    particolare la versione \texttt{1.1}. Esiste una versione pi\`u aggiornata,
-    la \texttt{1.50pre}, scartata perch\'e ad oggi priva di documentazione.
+    Come gi\`a detto l'implementazione parallela usa SkeTo, in particolare la
+    versione \texttt{1.1}. Esiste una versione pi\`u aggiornata, la
+    \texttt{1.50pre}, scartata perch\'e ad oggi priva di documentazione.
     Internamente SkeTo si avvale di un'implementazione disponibile di MPI;
     quella utilizzata da questo progetto \`e la distribuzione
     \href{http://www.mpich.org}{\underline{MPICH}} versione \texttt{3.0.4}. 
-    Infine la lettura e scrittura delle immagini sono interamente delegate alla
+    La lettura e scrittura delle immagini sono interamente delegate alla
     libreria \href{http://www.imagemagick.org/script/index.php}{\underline{ImageMagick}}
     tramite \href{http://www.imagemagick.org/script/magick++.php}{\underline{\mpp}},
-    la sua API per \cpp, versione \texttt{6.8.6-9}.
+    la sua API per \cpp, versione \texttt{6.8.6-9}. Usiamo infine la libreria \href{http://www.libpng.org/pub/png/libpng.html}{\underline{libpng}}, versione \texttt{1.6.3}, per la manipolazione di immagini in formato \texttt{png}.
 
     \section{Valutazione delle performance}
 
+    Entrambe le implementazioni sono state eseguite sia su una macchina con
+    pi\`u core sia su un cluster di pi\`u macchine. In questa sezione
+    riportiamo i risultati e li confrontiamo con i modelli teorici.
+
+    \`E facile rendersi conto, analizzando il codice, che il problema da
+    risolvere \`e parallelo sui dati. Ci aspettiamo quindi che il tempo di
+    servizio decresca linearmente con il numero di elementi di calcolo
+    impiegati.
+
+    \subsection{Multicore}
+
     I seguenti test sono stati svolti su \texttt{andromeda.di.unipi.it},
-    macchina dotata di 16 core. In particolare sono stati utilizzati per
-    la raccolta dati gli script \texttt{bin/sequentialMulticore} e
-    \texttt{bin/parallelMulticore} descritti in appendice.
+    macchina con 8 core, ciascuno dotato di 2 contesti. Ci aspettiamo quindi,
+    essendo il problema parallelo sui dati, uno speedup quasi lineare fino a
+    8 core. In seguito, per la natura del problema, aggiungere pi\`u core non
+    apporta benefici, anzi comporta un calo dell'efficienza.
 
     Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
     service time dell'applicazione sequenziale e di quella parallela con
     grado di parallelismo \(n\). L'esecuzione degli script
     \texttt{awk -f awk/service\_time.awk dat/sequential\_multicore.awk} e
-    \texttt{awk -f awk/multicore\_service\_time.awk dat/parallel\_multicore.raw} porta a stimare
-    \(T_{\text{seq}} \approx 1.12\) e \(T_{\text{par}}(n)\) come
-    dalla seguente tabella:
+    \texttt{awk -f awk/multicore\_service\_time.awk dat/parallel\_multicore.raw}    permette di stimare \(T_{\text{seq}} \approx 1.12\) e
+    \(T_{\text{par}}(n)\) come dalla seguente tabella:
 
     \begin{table}[H]
       \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(T_{\text{par}}(n)\) & .89 & .46 & .38 & .28 & .18 & .19 & .19 & .20
-                        & .19 & .13 & .14 & .17 & .16 & .17 & .18 & .18 \\
+        \(T_{\text{par}}(n)\) & 1.15 & .55 & .39 & .28 & .23 & .20 & .17 & .15
+                        & .15 & .15 & .15 & .15 & .14 & .16 & .14 & .15 \\
       \end{tabularx}
     \end{table}
 
@@ -173,8 +184,8 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(s(n)\) & 0.96 & 1.85 & 2.29 & 3.03 & 4.67 & 4.49 & 4.53 & 4.39
-                 & 4.50 & 6.72 & 6.03 & 5.17 & 5.49 & 5.18 & 4.72 & 4.84 \\
+        \(s(n)\) & 0.98 & 2.03 & 2.98 & 4.03 & 4.95 & 5.65 & 6.50 & 7.43
+                 & 7.44 & 7.65 & 7.42 & 7.25 & 7.80 & 7.21 & 7.99 & 7.49 \\
       \end{tabularx}
     \end{table}
 
@@ -186,8 +197,8 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(\text{scalab}(n)\) & 1.00 & 1.92 & 2.37 & 3.15 & 4.85 & 4.66 & 4.71 & 4.56
-                 & 4.68 & 6.98 & 6.26 & 5.37 & 5.70 & 5.38 & 4.91 & 5.02 \\
+        \(\text{scalab}(n)\) & 1.00 & 2.08 & 2.96 & 4.13 & 5.07 & 5.79 & 6.66 & 7.62
+                 & 7.63 & 7.84 & 7.60 & 7.43 & 7.99 & 7.39 & 8.19 & 7.67 \\
       \end{tabularx}
     \end{table}
 
@@ -199,8 +210,8 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(\epsilon(n)\) & .96 & .93 & .76 & .76 & .93 & .75 & .65 & .55
-                  & .50 & .67 & .55 & .43 & .42 & .37 & .31 & .30 \\
+        \(\epsilon(n)\) & .98 & 1.02 & .96 & 1.01 & .99 & .94 & .93 & .93
+                  & .83 & .76 & .67 & .60 & .60 & .52 & .53 & .47 \\
       \end{tabularx}
     \end{table}
 
@@ -236,8 +247,16 @@
       \end{subfigure}
     \end{figure}
 
-    Osserviamo che il programma scala, ma meno di quanto teoricamente atteso,
-    in particolare su più di \(10\) processori.
+    Osserviamo buona corrispondenza fra le previsioni teoriche e i dati:
+    speedup quasi lineare fino a 8 core, poi un plateau delle performance.
+
+    \subsection{Cluster}
+
+    I seguenti test sono stati eseguiti sui computer dell'aula 4 del
+    Dipartimento di Matematica dell'Universit\`a di Pisa. Ciascuno di questi
+    
+
+    \newpage
 
     \section{Valutazione dei risultati}
 
@@ -300,29 +319,33 @@
       \subsection{Makefile}
 
       \begin{description}
-        \item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{parallel}, \texttt{sequential} e \texttt{tex}.
+	\item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{parallel}, \texttt{sequential} e \texttt{tex} eccetto \texttt{relazione.pdf}.
         \item[\texttt{gif}:] Genera una gif animata i cui frame sono le
           immagini risultanti al variare della soglia \texttt{p} da \(0\) a
-          \(99\). Richiede l'installazione di ImageMagick.
+          \(99\).
         \item[\texttt{parallel}:] Compila con \texttt{sketocxx}
-          l'implementazione parallela. Richiede l'installazione di SkeTo, una
-          distribuzione di MPI compatibile e ImageMagick.
+          l'implementazione parallela.
   	\item[\texttt{pdf}:] Compila con \texttt{pdflatex} il presente
-          documento. Richiede l'installazione di \texttt{pdflatex} e del
-          pacchetto Python \href{http://pygments.org}{\underline{pygments}}.
+	  documento.
         \item[\texttt{sequential}:] Compila con \texttt{g++} l'implementazione
-          sequenziale. Richiede l'installazione di ImageMagick.
+          sequenziale.
       \end{description}
 
       \subsection{Eseguibili}
 
       \begin{description}
+	\item[\texttt{bin/generateMachinefile}:] TODO
         \item[\texttt{bin/sequential numberOfJobs}:] Esegue \texttt{sequential}
           su \texttt{numberOfJobs} istanze del problema dell'Histogram
           Thresholding. Stampa su \texttt{stdout} una coppia separata da uno
           spazio in cui il primo numero \`e \texttt{numberOfJobs} e il secondo
           il tempo in secondi impiegato da \texttt{sequential} a meno di
           operazioni di lettura e scrittura sul file system. 
+	\item[\texttt{bin/sequentialCluster}:] TODO
+	\item[\texttt{bin/sequentialMulticore}:] TODO
+	\item[\texttt{bin/parallel}:] TODO
+	\item[\texttt{bin/parallelCluster}:] TODO
+	\item[\texttt{bin/parallelMulticore}:] TODO
       \end{description}
 
       \subsection{Licenza}
