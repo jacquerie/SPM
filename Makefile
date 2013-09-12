@@ -1,9 +1,5 @@
 MAGICFLAGS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
 
-awk:
-	awk -f awk/sequential.awk dat/sequential-multicore.dat
-	awk -f awk/sequential.wak dat/sequential-cluster.dat
-
 clean:
 	rm -f bin/sequential bin/parallel
 	rm -f relazione.aux relazione.log relazione.out relazione.pyg relazione.toc
@@ -23,5 +19,5 @@ pdf:
 sequential: src/sequential.cpp
 	g++ src/sequential.cpp src/job.cpp -o bin/sequential $(MAGICFLAGS)
 
-.PHONY: awk clean gif nproc parallel pdf sequential
+.PHONY: clean gif nproc parallel pdf sequential
 
