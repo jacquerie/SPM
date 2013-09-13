@@ -14,14 +14,22 @@ parallel: src/parallel.cpp
 	sketocxx src/parallel.cpp src/job.cpp -o bin/parallel $(MAGICFLAGS)
 
 pdf:
-	awk -f awk/multicore_service_time.awk dat/parallel_multicore.raw > tex/parallel.dat
-	awk -f awk/multicore_efficiency.awk dat/parallel_multicore.raw > tex/efficiency.dat
-	awk -f awk/multicore_scalability.awk dat/parallel_multicore.raw > tex/scalability.dat
-	awk -f awk/multicore_speedup.awk dat/parallel_multicore.raw > tex/speedup.dat
-	gnuplot tex/parallel.gnuplot
-	gnuplot tex/efficiency.gnuplot
-	gnuplot tex/scalability.gnuplot
-	gnuplot tex/speedup.gnuplot
+	awk -f awk/multicore_service_time.awk dat/parallel_multicore.raw > tex/multicore_service_time.dat
+	awk -f awk/multicore_efficiency.awk dat/parallel_multicore.raw > tex/multicore_efficiency.dat
+	awk -f awk/multicore_scalability.awk dat/parallel_multicore.raw > tex/multicore_scalability.dat
+	awk -f awk/multicore_speedup.awk dat/parallel_multicore.raw > tex/multicore_speedup.dat
+	awk -f awk/cluster_service_time.awk dat/parallel_cluster.raw > tex/cluster_service_time.dat
+	awk -f awk/cluster_efficiency.awk dat/parallel_cluster.raw > tex/cluster_efficiency.dat
+	awk -f awk/cluster_scalability.awk dat/parallel_cluster.raw > tex/cluster_scalability.dat
+	awk -f awk/cluster_speedup.awk dat/parallel_cluster.raw > tex/cluster_speedup.dat
+	gnuplot tex/multicore_service_time.gnuplot
+	gnuplot tex/multicore_efficiency.gnuplot
+	gnuplot tex/multicore_scalability.gnuplot
+	gnuplot tex/multicore_speedup.gnuplot
+	gnuplot tex/cluster_service_time.gnuplot
+	gnuplot tex/cluster_efficiency.gnuplot
+	gnuplot tex/cluster_scalability.gnuplot
+	gnuplot tex/cluster_speedup.gnuplot
 	pdflatex -shell-escape tex/relazione.tex
 
 sequential: src/sequential.cpp

@@ -155,9 +155,11 @@
 
     I seguenti test sono stati svolti su \texttt{andromeda.di.unipi.it},
     macchina con 2 processori Intel Xeon E5520 a 4 core con clock a 2.27GHz,
-    ciascuno dotato di 2 contesti. Ci aspettiamo quindi uno speedup quasi
-    lineare fino a 8 elementi di calcolo, in seguito un plateau delle
-    performance e un calo dell'efficienza.
+    ciascuno dotato di 2 contesti. 
+    
+    Ci aspettiamo quindi uno speedup quasi lineare fino a 8 elementi di
+    calcolo, in seguito un plateau delle performance e un calo
+    dell'efficienza.
 
     Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
     service time dell'applicazione sequenziale e di quella parallela con
@@ -222,13 +224,13 @@
       \centering
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/parallel.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_service_time.tex}}
         \caption*{\(T_{\text{par}}(n)\)}
       \end{subfigure}
       \hspace{0.05\textwidth}
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/speedup.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_speedup.tex}}
         \caption*{\(s(n)\)}
       \end{subfigure}
 
@@ -236,13 +238,13 @@
 
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/scalability.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_scalability.tex}}
         \caption*{\(\text{scalab}(n)\)}
       \end{subfigure}
       \hspace{0.05\textwidth}
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/efficiency.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_efficiency.tex}}
         \caption*{\(\epsilon(n)\)}
       \end{subfigure}
     \end{figure}
@@ -254,11 +256,111 @@
 
     I seguenti test sono stati eseguiti sui computer dell'aula 4 del
     Dipartimento di Matematica dell'Universit\`a di Pisa. Ciascuno di questi
-    possiede un processore AMD A8-3850 a 4 core con clock 800MHz.
-    
-    TODO
+    possiede un processore AMD A8-3850 a 4 core con clock 800MHz. Sono
+    teoricamente disponibili 23 computer; in pratica alcuni di questi
+    risultano inaccessibili perch\`e guasti o spenti. Lo script
+    \texttt{bin/generateMachinefile} determina quali macchine sono accese
+    e accessibili via \texttt{ssh}; tale informazione viene annotata nel file
+    \texttt{Machinefile}. Tipicamente sono disponibili 20 computer.
 
-    \newpage
+    I dati raccolti prevedono di processare 100 immagini. Avendo a disposizione
+    80 processori \`e evidente che non esista convenienza nell'usarne pi\`u di
+    50; infatti la computazione dovr\`a comunque essere effettuata in due stadi
+    di distribuzione e raccolta di risultati. Per la stessa ragione prevediamo
+    che quantit\`a di processori tale da dividere la computazione in \(k\)
+    stadi otterrano performance simili. Insomma prevediamo un andamento
+    ``a gradini'' dello speedup.
+
+    Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
+    service time dell'applicazione sequenziale e di quella parallela con
+    grado di parallelismo \(n\). L'esecuzione degli script
+    \texttt{awk/service\_time.awk} e \texttt{awk/cluster\_service\_time.awk}
+    permette di stimare \(T_{\text{seq}} \approx 1.49\) e \(T_{\text{par}}(n)\)
+    come dalla seguente tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(T_{\text{par}}(n)\) & .39 & .19 & .14 & .09 & .07 & .07 & .05 & .05
+                        & .05 & .04 & .04 & .04 & .04 & .04 & .04 & .04 \\
+      \end{tabularx}
+    \end{table}
+    
+    L'esecuzione dello script \texttt{awk/cluster\_speedup.awk}
+    permette di stimare lo speedup \(s(n)\) come segue:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(s(n)\) &  3.9 &  7.7 & 10.9 & 16.7 & 20.2 & 20.5 & 27.5 & 27.9
+                 & 27.3 & 40.6 & 42.2 & 42.4 & 42.7 & 41.5 & 42.5 & 41.1 \\
+      \end{tabularx}
+    \end{table}
+
+    Dallo script \texttt{awk/cluster\_scalability.awk} ricaviamo le
+    seguenti stime per la scalabilità \(\text{scalab}(n)\):
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+	\(\text{scalab}(n)\) &  3.7 &  7.4 & 10.5 & 16.1 & 19.4 & 19.7 & 26.4 & 26.8
+                 & 26.2 & 39.0 & 40.5 & 40.7 & 39.1 & 39.8 & 40.8 & 39.4 \\
+      \end{tabularx}
+    \end{table}
+
+    Inoltre dallo script \texttt{awk/cluster\_efficiency.awk}
+    possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(\epsilon(n)\) & .77 & .77 & .73 & .84 & .81 & .78 & .79 & .70
+                 & .61 & .81 & .77 & .71 & .63 & .59 & .57 & .51 \\
+      \end{tabularx}
+    \end{table}
+
+    Rappresentiamo infine per immediatezza visiva le precedenti tabelle con
+    istogrammi:
+
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_service_time.tex}}
+        \caption*{\(T_{\text{par}}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_speedup.tex}}
+        \caption*{\(s(n)\)}
+      \end{subfigure}
+
+      \vspace{0.05\textwidth}
+
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_scalability.tex}}
+        \caption*{\(\text{scalab}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_efficiency.tex}}
+        \caption*{\(\epsilon(n)\)}
+      \end{subfigure}
+    \end{figure}
+
+    Osserviamo buona corrispondenza fra le previsioni teoriche e i dati:
+    speedup ``a gradini'' fino a 50 core, poi un plateau delle performance.
 
     \section{Valutazione dei risultati}
 
