@@ -46,7 +46,7 @@
     SkeTo è uno skeleton framework in cui dichiarazione e istanziazione degli
     skeleton avvengono allo stesso tempo. I metodi offerti dalle classi
     astratte del framework, implementate in termini di template, sono quelli
-    tipici della programmazione funzionale, come \texttt{map}, \texttt{reduce}
+    tipici della programmazione funzionale come \texttt{map}, \texttt{reduce}
     e \texttt{scan}. Queste caratteristiche rendono molto compatto il codice:
     in effetti l'intero codice non funzionale parallelo di
     \texttt{src/parallel.cpp} ammonta a \(63\) righe commenti inclusi, di cui
@@ -122,10 +122,10 @@
     Osserviamo che i metodi \texttt{execute} e \texttt{writeResult} hanno
     come tipo di ritorno \texttt{Job}; in effetti questi metodi ritornano
     l'oggetto stesso. Ciò consente di usarli in \texttt{sequential.cpp} come
-    se avessero tipo di ritorno \texttt{void} (cio\`e ignorandone il valore
-    di ritorno), e in \texttt{parallel.cpp}, come argomento di
-    \texttt{generate} e \texttt{map}, dopo averli astratti in opportuni
-    function object come nel seguente esempio:
+    se avessero tipo di ritorno \texttt{void}, cio\`e ignorandone il valore
+    di ritorno, e in \texttt{parallel.cpp} come argomento di
+    \texttt{generate} e \texttt{map}. \`E necessario astrarli in opportuni
+    function object, ad esempio:
 
     \inputminted[]{c++}{tex/src/function-object.cpp}
 
@@ -138,7 +138,7 @@
     La lettura e scrittura delle immagini sono interamente delegate alla
     libreria \href{http://www.imagemagick.org/script/index.php}{\underline{ImageMagick}}
     tramite \href{http://www.imagemagick.org/script/magick++.php}{\underline{\mpp}},
-    la sua API per \cpp, versione \texttt{6.8.6-9}. Usiamo infine la libreria \href{http://www.libpng.org/pub/png/libpng.html}{\underline{libpng}}, versione \texttt{1.6.3}, per la manipolazione di immagini in formato \texttt{png}.
+    la sua API per \cpp, versione \texttt{6.8.6-9}. Usiamo infine la libreria \href{http://www.libpng.org/pub/png/libpng.html}{\underline{libpng}} versione \texttt{1.6.3} per la manipolazione di immagini in formato \texttt{png}.
 
     \section{Valutazione delle performance}
 
@@ -146,7 +146,7 @@
     pi\`u core sia su un cluster di pi\`u macchine. In questa sezione
     riportiamo i risultati e li confrontiamo con i modelli teorici.
 
-    \`E facile rendersi conto, analizzando il codice, che il problema da
+    Analizzando il codice \`e facile rendersi conto che il problema da
     risolvere \`e parallelo sui dati. Ci aspettiamo quindi che il tempo di
     servizio decresca linearmente con il numero di elementi di calcolo
     impiegati.
@@ -154,17 +154,17 @@
     \subsection{Multicore}
 
     I seguenti test sono stati svolti su \texttt{andromeda.di.unipi.it},
-    macchina con 8 core, ciascuno dotato di 2 contesti. Ci aspettiamo quindi,
-    essendo il problema parallelo sui dati, uno speedup quasi lineare fino a
-    8 core. In seguito, per la natura del problema, aggiungere pi\`u core non
-    apporta benefici, anzi comporta un calo dell'efficienza.
+    macchina con 2 processori Intel Xeon E5520 a 4 core con clock a 2.27GHz,
+    ciascuno dotato di 2 contesti. Ci aspettiamo quindi uno speedup quasi
+    lineare fino a 8 elementi di calcolo, in seguito un plateau delle
+    performance e un calo dell'efficienza.
 
     Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
     service time dell'applicazione sequenziale e di quella parallela con
     grado di parallelismo \(n\). L'esecuzione degli script
-    \texttt{awk -f awk/service\_time.awk dat/sequential\_multicore.awk} e
-    \texttt{awk -f awk/multicore\_service\_time.awk dat/parallel\_multicore.raw}    permette di stimare \(T_{\text{seq}} \approx 1.12\) e
-    \(T_{\text{par}}(n)\) come dalla seguente tabella:
+    \texttt{awk/service\_time.awk} e \texttt{awk/multicore\_service\_time.awk}
+    permette di stimare \(T_{\text{seq}} \approx 1.12\) e \(T_{\text{par}}(n)\)
+    come dalla seguente tabella:
 
     \begin{table}[H]
       \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
@@ -176,7 +176,7 @@
       \end{tabularx}
     \end{table}
 
-    L'esecuzione dello script \texttt{awk -f awk/multicore\_speedup.awk dat/parallel\_multicore.raw}
+    L'esecuzione dello script \texttt{awk/multicore\_speedup.awk}
     permette di stimare lo speedup \(s(n)\) come segue:
 
     \begin{table}[H]
@@ -189,7 +189,7 @@
       \end{tabularx}
     \end{table}
 
-    Dallo script \texttt{awk -f awk/multicore\_scalability.awk dat/parallel\_multicore.raw} ricaviamo le
+    Dallo script \texttt{awk/multicore\_scalability.awk} ricaviamo le
     seguenti stime per la scalabilità \(\text{scalab}(n)\):
 
     \begin{table}[H]
@@ -202,7 +202,7 @@
       \end{tabularx}
     \end{table}
 
-    Inoltre dallo script \texttt{awk -f awk/multicore\_efficiency.awk dat/parallel\_multicore.raw}
+    Inoltre dallo script \texttt{awk/multicore\_efficiency.awk}
     possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
 
     \begin{table}[H]
@@ -254,7 +254,9 @@
 
     I seguenti test sono stati eseguiti sui computer dell'aula 4 del
     Dipartimento di Matematica dell'Universit\`a di Pisa. Ciascuno di questi
+    possiede un processore AMD A8-3850 a 4 core con clock 800MHz.
     
+    TODO
 
     \newpage
 
@@ -323,6 +325,8 @@
         \item[\texttt{gif}:] Genera una gif animata i cui frame sono le
           immagini risultanti al variare della soglia \texttt{p} da \(0\) a
           \(99\).
+	\item[\texttt{nproc}:] Restituisce il numero di processori disponibili nel
+	  \texttt{Machinefile}.
         \item[\texttt{parallel}:] Compila con \texttt{sketocxx}
           l'implementazione parallela.
   	\item[\texttt{pdf}:] Compila con \texttt{pdflatex} il presente
@@ -334,18 +338,26 @@
       \subsection{Eseguibili}
 
       \begin{description}
-	\item[\texttt{bin/generateMachinefile}:] TODO
-        \item[\texttt{bin/sequential numberOfJobs}:] Esegue \texttt{sequential}
-          su \texttt{numberOfJobs} istanze del problema dell'Histogram
+	\item[\texttt{bin/generateMachinefile}:] Genera tramite \texttt{ping} e
+	  connessioni ssh un \texttt{Machinefile} delle macchine funzionanti in
+	  aula 4.
+        \item[\texttt{bin/sequential numberOfJobs}:] Esegue l'implementazione
+	  sequenziale su \texttt{numberOfJobs} istanze del problema dell'Histogram
           Thresholding. Stampa su \texttt{stdout} una coppia separata da uno
           spazio in cui il primo numero \`e \texttt{numberOfJobs} e il secondo
-          il tempo in secondi impiegato da \texttt{sequential} a meno di
+          il tempo in secondi impiegato da \texttt{bin/sequential} a meno di
           operazioni di lettura e scrittura sul file system. 
-	\item[\texttt{bin/sequentialCluster}:] TODO
-	\item[\texttt{bin/sequentialMulticore}:] TODO
-	\item[\texttt{bin/parallel}:] TODO
-	\item[\texttt{bin/parallelCluster}:] TODO
-	\item[\texttt{bin/parallelMulticore}:] TODO
+	\item[\texttt{bin/sequentialCluster}:] Script usato nella generazione
+	  dei dati dell'implementazione sequenziale su una macchina dell'aula 4.
+	\item[\texttt{bin/sequentialMulticore}:] Script usato nella generazione
+	  dei dati dell'implementazione sequenziale su \texttt{andromeda.di.unipi.it}.
+	\item[\texttt{bin/parallel}:] Binario contenente l'implementazione parallela
+	  della soluzione al problema dell'Histogram Thresholding. Richiede di essere
+	  invocato tramite \texttt{sketorun}.
+	\item[\texttt{bin/parallelCluster}:] Script usato nella generazione dei
+	  dei dati dell'implementazione parallela sulle macchine disponibili in aula 4.
+	\item[\texttt{bin/parallelMulticore}:] Script usato nella generazione dei
+	  dati dell'implementazione parallela su \texttt{andromeda.di.unipi.it}.
       \end{description}
 
       \subsection{Licenza}
