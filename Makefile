@@ -1,9 +1,5 @@
 MAGICFLAGS = `Magick++-config --cppflags --cxxflags --ldflags --libs`
 
-awk:
-	awk -f awk/sequential.awk dat/sequential-multicore.dat
-	awk -f awk/sequential.wak dat/sequential-cluster.dat
-
 clean:
 	rm -f bin/sequential bin/parallel
 	rm -f relazione.aux relazione.log relazione.out relazione.pyg relazione.toc
@@ -17,23 +13,27 @@ nproc:
 parallel: src/parallel.cpp
 	sketocxx src/parallel.cpp src/job.cpp -o bin/parallel $(MAGICFLAGS)
 
-parallel_cluster:
-	@bin/parallelCluster >> dat/parallel-cluster.dat
-
-parallel_multicore:
-	@bin/parallelMulticore >> dat/parallel-multicore.dat
-
 pdf:
+	awk -f awk/multicore_service_time.awk dat/parallel_multicore.raw > tex/multicore_service_time.dat
+	awk -f awk/multicore_efficiency.awk dat/parallel_multicore.raw > tex/multicore_efficiency.dat
+	awk -f awk/multicore_scalability.awk dat/parallel_multicore.raw > tex/multicore_scalability.dat
+	awk -f awk/multicore_speedup.awk dat/parallel_multicore.raw > tex/multicore_speedup.dat
+	awk -f awk/cluster_service_time.awk dat/parallel_cluster.raw > tex/cluster_service_time.dat
+	awk -f awk/cluster_efficiency.awk dat/parallel_cluster.raw > tex/cluster_efficiency.dat
+	awk -f awk/cluster_scalability.awk dat/parallel_cluster.raw > tex/cluster_scalability.dat
+	awk -f awk/cluster_speedup.awk dat/parallel_cluster.raw > tex/cluster_speedup.dat
+	gnuplot tex/multicore_service_time.gnuplot
+	gnuplot tex/multicore_efficiency.gnuplot
+	gnuplot tex/multicore_scalability.gnuplot
+	gnuplot tex/multicore_speedup.gnuplot
+	gnuplot tex/cluster_service_time.gnuplot
+	gnuplot tex/cluster_efficiency.gnuplot
+	gnuplot tex/cluster_scalability.gnuplot
+	gnuplot tex/cluster_speedup.gnuplot
 	pdflatex -shell-escape tex/relazione.tex
 
 sequential: src/sequential.cpp
 	g++ src/sequential.cpp src/job.cpp -o bin/sequential $(MAGICFLAGS)
 
-sequential_cluster:
-	@bin/sequentialCluster >> dat/sequential-cluster.dat
-
-sequential_multicore:
-	@bin/sequentialMulticore >> dat/sequential-multicore.dat
-
-.PHONY: awk clean gif nproc parallel parallel_cluster parallel_multicore pdf sequential sequential_cluster sequential_multicore
+.PHONY: clean gif nproc parallel pdf sequential
 

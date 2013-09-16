@@ -2,11 +2,11 @@
 
 NUMBER_OF_JOBS=100
 
-for np in {1..`nproc`}
+for np in {1..16}
 do
-    for i in {1..100}
+    for i in {1..10}
     do
-        sketorun -np $np bin/parallel $NUMBER_OF_JOBS
+        echo $np `sketorun -np $np bin/parallel $NUMBER_OF_JOBS`
     done
 done
 

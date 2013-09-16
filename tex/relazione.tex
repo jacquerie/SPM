@@ -46,7 +46,7 @@
     SkeTo è uno skeleton framework in cui dichiarazione e istanziazione degli
     skeleton avvengono allo stesso tempo. I metodi offerti dalle classi
     astratte del framework, implementate in termini di template, sono quelli
-    tipici della programmazione funzionale, come \texttt{map}, \texttt{reduce}
+    tipici della programmazione funzionale come \texttt{map}, \texttt{reduce}
     e \texttt{scan}. Queste caratteristiche rendono molto compatto il codice:
     in effetti l'intero codice non funzionale parallelo di
     \texttt{src/parallel.cpp} ammonta a \(63\) righe commenti inclusi, di cui
@@ -65,7 +65,7 @@
     Parte centrale del lavoro \`e il confronto delle performance con le
     previsioni teoriche, seguito da una dimostrazione dei risultati ottenuti
     dal programma. Concludiamo con un manuale d'uso che contiene le rule
-    definite nel \texttt{Makefile} e altri script disponibili.
+    definite nel \texttt{Makefile} e gli script disponibili.
 
     \section{Il problema dell'Histogram Thresholding}
 
@@ -122,50 +122,63 @@
     Osserviamo che i metodi \texttt{execute} e \texttt{writeResult} hanno
     come tipo di ritorno \texttt{Job}; in effetti questi metodi ritornano
     l'oggetto stesso. Ciò consente di usarli in \texttt{sequential.cpp} come
-    se avessero tipo di ritorno \texttt{void} (cio\`e ignorandone il valore
-    di ritorno), e in \texttt{parallel.cpp}, come argomento di
-    \texttt{generate} e \texttt{map}, dopo averli astratti in opportuni
-    function object come nel seguente esempio:
+    se avessero tipo di ritorno \texttt{void}, cio\`e ignorandone il valore
+    di ritorno, e in \texttt{parallel.cpp} come argomento di
+    \texttt{generate} e \texttt{map}. \`E necessario astrarli in opportuni
+    function object, ad esempio:
 
     \inputminted[]{c++}{tex/src/function-object.cpp}
 
-    Come gi\`a ricordato l'implementazione parallela si avvale di SkeTo, in
-    particolare la versione \texttt{1.1}. Esiste una versione pi\`u aggiornata,
-    la \texttt{1.50pre}, scartata perch\'e ad oggi priva di documentazione.
+    Come gi\`a detto l'implementazione parallela usa SkeTo, in particolare la
+    versione \texttt{1.1}. Esiste una versione pi\`u aggiornata, la
+    \texttt{1.50pre}, scartata perch\'e ad oggi priva di documentazione.
     Internamente SkeTo si avvale di un'implementazione disponibile di MPI;
     quella utilizzata da questo progetto \`e la distribuzione
     \href{http://www.mpich.org}{\underline{MPICH}} versione \texttt{3.0.4}. 
-    Infine la lettura e scrittura delle immagini sono interamente delegate alla
+    La lettura e scrittura delle immagini sono interamente delegate alla
     libreria \href{http://www.imagemagick.org/script/index.php}{\underline{ImageMagick}}
     tramite \href{http://www.imagemagick.org/script/magick++.php}{\underline{\mpp}},
-    la sua API per \cpp, versione \texttt{6.8.6-9}.
+    la sua API per \cpp, versione \texttt{6.8.6-9}. Usiamo infine la libreria \href{http://www.libpng.org/pub/png/libpng.html}{\underline{libpng}} versione \texttt{1.6.3} per la manipolazione di immagini in formato \texttt{png}.
 
     \section{Valutazione delle performance}
 
+    Entrambe le implementazioni sono state eseguite sia su una macchina con
+    pi\`u core sia su un cluster di pi\`u macchine. In questa sezione
+    riportiamo i risultati e li confrontiamo con i modelli teorici.
+
+    Analizzando il codice \`e facile rendersi conto che il problema da
+    risolvere \`e parallelo sui dati. Ci aspettiamo quindi che il tempo di
+    servizio decresca linearmente con il numero di elementi di calcolo
+    impiegati.
+
+    \subsection{Multicore}
+
     I seguenti test sono stati svolti su \texttt{andromeda.di.unipi.it},
-    macchina dotata di 16 core. In particolare sono stati utilizzati per
-    la raccolta dati gli script \texttt{test\_sequential} e
-    \texttt{test\_parallel} descritti in appendice.
+    macchina con 2 processori Intel Xeon E5520 a 4 core con clock a 2.27GHz,
+    ciascuno dotato di 2 contesti. 
+    
+    Ci aspettiamo quindi uno speedup quasi lineare fino a 8 elementi di
+    calcolo, in seguito un plateau delle performance e un calo
+    dell'efficienza.
 
     Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
     service time dell'applicazione sequenziale e di quella parallela con
     grado di parallelismo \(n\). L'esecuzione degli script
-    \texttt{awk -f sequential.awk sequential.dat} e
-    \texttt{awk -f parallel.awk parallel.dat} porta a stimare
-    \(T_{\text{seq}} \approx 0.86\) e \(T_{\text{par}}(n)\) come
-    dalla seguente tabella:
+    \texttt{awk/service\_time.awk} e \texttt{awk/multicore\_service\_time.awk}
+    permette di stimare \(T_{\text{seq}} \approx 1.12\) e \(T_{\text{par}}(n)\)
+    come dalla seguente tabella:
 
     \begin{table}[H]
       \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(T_{\text{par}}(n)\) & .89 & .46 & .38 & .28 & .18 & .19 & .19 & .20
-                        & .19 & .13 & .14 & .17 & .16 & .17 & .18 & .18 \\
+        \(T_{\text{par}}(n)\) & 1.15 & .55 & .39 & .28 & .23 & .20 & .17 & .15
+                        & .15 & .15 & .15 & .15 & .14 & .16 & .14 & .15 \\
       \end{tabularx}
     \end{table}
 
-    L'esecuzione dello script \texttt{awk -f speedup.awk parallel.dat}
+    L'esecuzione dello script \texttt{awk/multicore\_speedup.awk}
     permette di stimare lo speedup \(s(n)\) come segue:
 
     \begin{table}[H]
@@ -173,12 +186,12 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(s(n)\) & 0.96 & 1.85 & 2.29 & 3.03 & 4.67 & 4.49 & 4.53 & 4.39
-                 & 4.50 & 6.72 & 6.03 & 5.17 & 5.49 & 5.18 & 4.72 & 4.84 \\
+        \(s(n)\) & 0.98 & 2.03 & 2.98 & 4.03 & 4.95 & 5.65 & 6.50 & 7.43
+                 & 7.44 & 7.65 & 7.42 & 7.25 & 7.80 & 7.21 & 7.99 & 7.49 \\
       \end{tabularx}
     \end{table}
 
-    Dallo script \texttt{awk -f scalability.awk parallel.dat} ricaviamo le
+    Dallo script \texttt{awk/multicore\_scalability.awk} ricaviamo le
     seguenti stime per la scalabilità \(\text{scalab}(n)\):
 
     \begin{table}[H]
@@ -186,12 +199,12 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(\text{scalab}(n)\) & 1.00 & 1.92 & 2.37 & 3.15 & 4.85 & 4.66 & 4.71 & 4.56
-                 & 4.68 & 6.98 & 6.26 & 5.37 & 5.70 & 5.38 & 4.91 & 5.02 \\
+        \(\text{scalab}(n)\) & 1.00 & 2.08 & 2.96 & 4.13 & 5.07 & 5.79 & 6.66 & 7.62
+                 & 7.63 & 7.84 & 7.60 & 7.43 & 7.99 & 7.39 & 8.19 & 7.67 \\
       \end{tabularx}
     \end{table}
 
-    Inoltre dallo script \texttt{awk -f efficiency.awk parallel.dat}
+    Inoltre dallo script \texttt{awk/multicore\_efficiency.awk}
     possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
 
     \begin{table}[H]
@@ -199,8 +212,8 @@
         \(n\) & 1 &  2 &  3 &  4 &  5 &  6 &  7 &  8
               & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16 \\
         \hline
-        \(\epsilon(n)\) & .96 & .93 & .76 & .76 & .93 & .75 & .65 & .55
-                  & .50 & .67 & .55 & .43 & .42 & .37 & .31 & .30 \\
+        \(\epsilon(n)\) & .98 & 1.02 & .96 & 1.01 & .99 & .94 & .93 & .93
+                  & .83 & .76 & .67 & .60 & .60 & .52 & .53 & .47 \\
       \end{tabularx}
     \end{table}
 
@@ -211,13 +224,13 @@
       \centering
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/parallel.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_service_time.tex}}
         \caption*{\(T_{\text{par}}(n)\)}
       \end{subfigure}
       \hspace{0.05\textwidth}
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/speedup.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_speedup.tex}}
         \caption*{\(s(n)\)}
       \end{subfigure}
 
@@ -225,19 +238,129 @@
 
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/scalability.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_scalability.tex}}
         \caption*{\(\text{scalab}(n)\)}
       \end{subfigure}
       \hspace{0.05\textwidth}
       \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{1.1\textwidth}{!}{\input{tex/efficiency.tex}}
+        \resizebox{1.1\textwidth}{!}{\input{tex/multicore_efficiency.tex}}
         \caption*{\(\epsilon(n)\)}
       \end{subfigure}
     \end{figure}
 
-    Osserviamo che il programma scala, ma meno di quanto teoricamente atteso,
-    in particolare su più di \(10\) processori.
+    Osserviamo buona corrispondenza fra le previsioni teoriche e i dati:
+    speedup quasi lineare fino a 8 core, poi un plateau delle performance.
+
+    \subsection{Cluster}
+
+    I seguenti test sono stati eseguiti sui computer dell'aula 4 del
+    Dipartimento di Matematica dell'Universit\`a di Pisa. Ciascuno di questi
+    possiede un processore AMD A8-3850 a 4 core con clock 800MHz. Sono
+    teoricamente disponibili 23 computer; in pratica alcuni di questi
+    risultano inaccessibili perch\`e guasti o spenti. Lo script
+    \texttt{bin/generateMachinefile} determina quali macchine sono accese
+    e accessibili via \texttt{ssh}; tale informazione viene annotata nel file
+    \texttt{Machinefile}. Tipicamente sono disponibili 20 computer.
+
+    I dati raccolti prevedono di processare 100 immagini. Avendo a disposizione
+    80 processori \`e evidente che non esista convenienza nell'usarne pi\`u di
+    50; infatti la computazione dovr\`a comunque essere effettuata in due stadi
+    di distribuzione e raccolta di risultati. Per la stessa ragione prevediamo
+    che quantit\`a di processori tale da dividere la computazione in \(k\)
+    stadi otterrano performance simili. Insomma prevediamo un andamento
+    ``a gradini'' dello speedup.
+
+    Siano \(T_{\text{seq}}\) e \(T_{\text{par}}(n)\) rispettivamente il 
+    service time dell'applicazione sequenziale e di quella parallela con
+    grado di parallelismo \(n\). L'esecuzione degli script
+    \texttt{awk/service\_time.awk} e \texttt{awk/cluster\_service\_time.awk}
+    permette di stimare \(T_{\text{seq}} \approx 1.49\) e \(T_{\text{par}}(n)\)
+    come dalla seguente tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(T_{\text{par}}(n)\) & .39 & .19 & .14 & .09 & .07 & .07 & .05 & .05
+                        & .05 & .04 & .04 & .04 & .04 & .04 & .04 & .04 \\
+      \end{tabularx}
+    \end{table}
+    
+    L'esecuzione dello script \texttt{awk/cluster\_speedup.awk}
+    permette di stimare lo speedup \(s(n)\) come segue:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(s(n)\) &  3.9 &  7.7 & 10.9 & 16.7 & 20.2 & 20.5 & 27.5 & 27.9
+                 & 27.3 & 40.6 & 42.2 & 42.4 & 42.7 & 41.5 & 42.5 & 41.1 \\
+      \end{tabularx}
+    \end{table}
+
+    Dallo script \texttt{awk/cluster\_scalability.awk} ricaviamo le
+    seguenti stime per la scalabilità \(\text{scalab}(n)\):
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+	\(\text{scalab}(n)\) &  3.7 &  7.4 & 10.5 & 16.1 & 19.4 & 19.7 & 26.4 & 26.8
+                 & 26.2 & 39.0 & 40.5 & 40.7 & 39.1 & 39.8 & 40.8 & 39.4 \\
+      \end{tabularx}
+    \end{table}
+
+    Inoltre dallo script \texttt{awk/cluster\_efficiency.awk}
+    possiamo stimare l'efficienza \(\epsilon(n)\) come in tabella:
+
+    \begin{table}[H]
+      \begin{tabularx}{\linewidth}{{c}l*{16}{X}}
+        \(n\) &  5 & 10 & 15 & 20 & 25 & 30 & 35 & 40
+              & 45 & 50 & 55 & 60 & 65 & 70 & 75 & 80 \\
+        \hline
+        \(\epsilon(n)\) & .77 & .77 & .73 & .84 & .81 & .78 & .79 & .70
+                 & .61 & .81 & .77 & .71 & .63 & .59 & .57 & .51 \\
+      \end{tabularx}
+    \end{table}
+
+    Rappresentiamo infine per immediatezza visiva le precedenti tabelle con
+    istogrammi:
+
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_service_time.tex}}
+        \caption*{\(T_{\text{par}}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_speedup.tex}}
+        \caption*{\(s(n)\)}
+      \end{subfigure}
+
+      \vspace{0.05\textwidth}
+
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_scalability.tex}}
+        \caption*{\(\text{scalab}(n)\)}
+      \end{subfigure}
+      \hspace{0.05\textwidth}
+      \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{1.1\textwidth}{!}{\input{tex/cluster_efficiency.tex}}
+        \caption*{\(\epsilon(n)\)}
+      \end{subfigure}
+    \end{figure}
+
+    Osserviamo buona corrispondenza fra le previsioni teoriche e i dati:
+    speedup ``a gradini'' fino a 50 core, poi un plateau delle performance.
 
     \section{Valutazione dei risultati}
 
@@ -300,29 +423,43 @@
       \subsection{Makefile}
 
       \begin{description}
-        \item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{parallel}, \texttt{sequential} e \texttt{tex}.
+	\item[\texttt{clean}:] Rimuove i file generati dalle rule \texttt{parallel}, \texttt{sequential} e \texttt{tex} eccetto \texttt{relazione.pdf}.
         \item[\texttt{gif}:] Genera una gif animata i cui frame sono le
           immagini risultanti al variare della soglia \texttt{p} da \(0\) a
-          \(99\). Richiede l'installazione di ImageMagick.
+          \(99\).
+	\item[\texttt{nproc}:] Restituisce il numero di processori disponibili nel
+	  \texttt{Machinefile}.
         \item[\texttt{parallel}:] Compila con \texttt{sketocxx}
-          l'implementazione parallela. Richiede l'installazione di SkeTo, una
-          distribuzione di MPI compatibile e ImageMagick.
+          l'implementazione parallela.
   	\item[\texttt{pdf}:] Compila con \texttt{pdflatex} il presente
-          documento. Richiede l'installazione di \texttt{pdflatex} e del
-          pacchetto Python \href{http://pygments.org}{\underline{pygments}}.
+	  documento.
         \item[\texttt{sequential}:] Compila con \texttt{g++} l'implementazione
-          sequenziale. Richiede l'installazione di ImageMagick.
+          sequenziale.
       \end{description}
 
       \subsection{Eseguibili}
 
       \begin{description}
-        \item[\texttt{bin/sequential numberOfJobs}:] Esegue \texttt{sequential}
-          su \texttt{numberOfJobs} istanze del problema dell'Histogram
+	\item[\texttt{bin/generateMachinefile}:] Genera tramite \texttt{ping} e
+	  connessioni ssh un \texttt{Machinefile} delle macchine funzionanti in
+	  aula 4.
+        \item[\texttt{bin/sequential numberOfJobs}:] Esegue l'implementazione
+	  sequenziale su \texttt{numberOfJobs} istanze del problema dell'Histogram
           Thresholding. Stampa su \texttt{stdout} una coppia separata da uno
           spazio in cui il primo numero \`e \texttt{numberOfJobs} e il secondo
-          il tempo in secondi impiegato da \texttt{sequential} a meno di
+          il tempo in secondi impiegato da \texttt{bin/sequential} a meno di
           operazioni di lettura e scrittura sul file system. 
+	\item[\texttt{bin/sequentialCluster}:] Script usato nella generazione
+	  dei dati dell'implementazione sequenziale su una macchina dell'aula 4.
+	\item[\texttt{bin/sequentialMulticore}:] Script usato nella generazione
+	  dei dati dell'implementazione sequenziale su \texttt{andromeda.di.unipi.it}.
+	\item[\texttt{bin/parallel}:] Binario contenente l'implementazione parallela
+	  della soluzione al problema dell'Histogram Thresholding. Richiede di essere
+	  invocato tramite \texttt{sketorun}.
+	\item[\texttt{bin/parallelCluster}:] Script usato nella generazione dei
+	  dei dati dell'implementazione parallela sulle macchine disponibili in aula 4.
+	\item[\texttt{bin/parallelMulticore}:] Script usato nella generazione dei
+	  dati dell'implementazione parallela su \texttt{andromeda.di.unipi.it}.
       \end{description}
 
       \subsection{Licenza}

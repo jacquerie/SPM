@@ -2,8 +2,11 @@
 
 NUMBER_OF_JOBS=100
 
-for i in {1..100}
+for np in {5..80..5}
 do
-    sketorun -np `make nproc` -f Machinefile bin/parallel $NUMBER_OF_JOBS
+    for i in {1..10}
+    do
+        echo $np `sketorun -np $np -f Machinefile bin/parallel $NUMBER_OF_JOBS`
+    done
 done
 
